@@ -1,9 +1,17 @@
 package com.example.restuarant.wishlist.service;
 
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.example.restuarant.naver.NaverClient;
+import com.example.restuarant.naver.dto.SearchImageReq;
+import com.example.restuarant.naver.dto.SearchLocalReq;
+import com.example.restuarant.naver.dto.SearchLocalRes;
 import com.example.restuarant.wishlist.dto.WishListDto;
+import com.example.restuarant.wishlist.entity.WishListEntity;
 import com.example.restuarant.wishlist.repository.WishListRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -12,17 +20,109 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WishListService {
     
-	// private final NaverClient naverClient;
+	private final NaverClient naverClient;
     private final WishListRepository wishListRepository;
     
 	public WishListDto search(String query) {
-		// TODO Auto-generated method stub
-		return null;
+		// 지역검색
+		var searchLocalReq = new SearchLocalReq();
+		searchLocalReq.setQuery(query);
+		
+		var searchLocalRes = naverClient.localSearch(searchLocalReq);		
+
+		// 지역 검색결과가 있는 경우
+		if(searchLocalRes.getTotal() > 0) {
+			var localItem = searchLocalRes.getItems().stream().findFirst().get();
+			
+			// HTML 태그있는 거 삭제(replace)
+			System.out.println("@ 이미지타이틀1: "+localItem.getTitle());
+			var imageQuery = localItem.getTitle().replaceAll("<[^>]*>", "");
+			System.out.println("@ 이미지타이틀2: "+imageQuery);
+			var searchImageReq = new SearchImageReq();
+			searchImageReq.setQuery(imageQuery);
+			
+			var searchImageRes = naverClient.imageSearch(searchImageReq);
+			
+			// 이미지 검색 결과가 있는 경우
+			if(searchImageRes.getTotal() > 0) {
+				var imageItem = searchImageRes.getItems().stream().findFirst().get();
+				
+				var result = new WishListDto();
+				result.setTitle(imageQuery);
+				result.setCategory(localItem.getCategory());
+				result.setAddress(localItem.getAddress());
+				result.setRoadAddress(localItem.getRoadAddress());
+                result.setHomePageLink(localItem.getLink());
+                result.setImageLink(imageItem.getLink());
+                return result;
+			}
+			
+		}
+		return new WishListDto();
 	}
 
 	public WishListDto add(WishListDto wishListDto) {
-		// TODO Auto-generated method stub
-		return null;
+		var entity = dtoToEntity(wishListDto);
+		var saveEntity = wishListRepository.save(entity);
+		
+		return entityToDto(saveEntity);
 	}
+	
+	private WishListEntity dtoToEntity(WishListDto wishListDto){
+        var entity = new WishListEntity();
+        entity.setIndex(wishListDto.getIndex());
+        entity.setTitle(wishListDto.getTitle());
+        entity.setCategory(wishListDto.getCategory());
+        entity.setAddress(wishListDto.getAddress());
+        entity.setRoadAddress(wishListDto.getRoadAddress());
+        entity.setHomePageLink(wishListDto.getHomePageLink());
+        entity.setImageLink(wishListDto.getImageLink());
+        entity.setVisit(wishListDto.isVisit());
+        entity.setVisitCount(wishListDto.getVisitCount());
+        entity.setLastVisitDate(wishListDto.getLastVisitDate());
+        return entity;
+    }
+
+    private WishListDto entityToDto(WishListEntity wishListEntity){
+        var dto = new WishListDto();
+        dto.setIndex(wishListEntity.getIndex());
+        dto.setTitle(wishListEntity.getTitle());
+        dto.setCategory(wishListEntity.getCategory());
+        dto.setAddress(wishListEntity.getAddress());
+        dto.setRoadAddress(wishListEntity.getRoadAddress());
+        dto.setHomePageLink(wishListEntity.getHomePageLink());
+        dto.setImageLink(wishListEntity.getImageLink());
+        dto.setVisit(wishListEntity.isVisit());
+        dto.setVisitCount(wishListEntity.getVisitCount());
+        dto.setLastVisitDate(wishListEntity.getLastVisitDate());
+        return dto;
+    }
+
+	public List<WishListDto> findAll() {
+		System.out.println("@ 스트림이 뭐야 : " + wishListRepository.findAll().stream());
+		return wishListRepository.findAll()
+				.stream()
+				.map(it -> entityToDto(it))
+				.collect(Collectors.toList());
+	}
+
+	public void delete(int index) {
+		wishListRepository.deleteById(index);
+		
+	}
+
+	public void addVisit(int index) {
+		var wishItem = wishListRepository.findById(index);
+		
+		// 존재하면 update 시킴
+		if(wishItem.isPresent()) {
+			var item = wishItem.get();
+			System.out.println("@ item : " + item);
+			item.setVisit(true);
+			item.setVisitCount(item.getVisitCount()+1);
+		}
+	}
+    
+    
 
 }

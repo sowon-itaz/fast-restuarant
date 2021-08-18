@@ -1,5 +1,8 @@
 package com.example.restuarant.naver.dto;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +18,15 @@ public class SearchLocalReq {
 	private int start = 1;
 
 	private String sort = "random";
+	
+    public MultiValueMap<String, String> toMultiValueMap(){
+    	var map = new LinkedMultiValueMap<String, String>();
+    	
+    	map.add("query", query);
+    	map.add("display", String.valueOf(display));
+    	map.add("start", String.valueOf(start));
+    	map.add("sort", sort);
+    	
+    	return map;
+    }
 }

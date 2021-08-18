@@ -2,6 +2,7 @@ package com.example.restuarant.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,15 @@ import com.example.restuarant.wishlist.service.WishListService;
 @RequiredArgsConstructor
 public class ApiController {
 	
+	/* 1. 필드주입
+	 * @Autowired
+	 * private WishListService wishlistService;
+	 * 
+	 * 2. 롬복을 활용한 생성자주입
+	 * 클래스단에 @RequiredArgsConstructor 설정 후 클래스안에서 상수로 정의
+	 * private final WishListService service;
+	 * */
+	
 	private final WishListService service;
 	
 	@GetMapping("/search")
@@ -35,19 +45,19 @@ public class ApiController {
 		return service.add(wishListDto);
 	}
 	
-//	@GetMapping("/all")
-//    public List<WishListDto> findAll(){
-//        return service.findAll();
-//    }
-//
-//    @DeleteMapping("/{index}")
-//    public void delete(@PathVariable int index){
-//        service.delete(index);
-//    }
-//
-//    @PostMapping("/{index}")
-//    public void addVisit(@PathVariable int index){
-//        service.addVisit(index);
-//    }
+	@GetMapping("/all")
+    public List<WishListDto> findAll(){
+        return service.findAll();
+    }
+
+    @DeleteMapping("/{index}")
+    public void delete(@PathVariable int index){
+        service.delete(index);
+    }
+
+    @PostMapping("/{index}")
+    public void addVisit(@PathVariable int index){
+        service.addVisit(index);
+    }
 	
 }

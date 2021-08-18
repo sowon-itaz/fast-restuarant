@@ -22,8 +22,8 @@ public class SearchLocalRes {
     public static class SearchLocalItem {
         private String title;
         private String link;
-        private String description;
         private String category;
+        private String description;
         private String telephone;
         private String address;
         private String roadAddress;

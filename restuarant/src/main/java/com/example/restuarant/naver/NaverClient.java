@@ -15,8 +15,11 @@ import com.example.restuarant.naver.dto.SearchImageRes;
 import com.example.restuarant.naver.dto.SearchLocalReq;
 import com.example.restuarant.naver.dto.SearchLocalRes;
 
+import lombok.extern.slf4j.Slf4j;
+
 /* env와 같이 스프링에서 yaml파일의 내용을 @Value로 들고 올수있다.
  * */
+@Slf4j
 @Component
 public class NaverClient {
 
@@ -39,7 +42,7 @@ public class NaverClient {
 				.build()
 				.encode()
 				.toUri();
-		System.out.println("@ uri : "+uri);
+		log.info("localSearch uri: {}, uri");
 		
 		// header 셋팅하기
 		var headers = new HttpHeaders();
@@ -66,8 +69,8 @@ public class NaverClient {
 				.build()
 				.encode()
 				.toUri();
-		System.out.println("@ uri : "+uri);
-
+		log.info("imageSearch uri: {}, uri");
+		
 		// header 셋팅하기
 		var headers = new HttpHeaders();
 		headers.set("X-Naver-Client-Id", naverClientId);

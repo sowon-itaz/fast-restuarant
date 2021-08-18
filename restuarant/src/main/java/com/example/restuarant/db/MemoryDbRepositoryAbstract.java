@@ -16,7 +16,6 @@ public abstract class MemoryDbRepositoryAbstract<T extends MemoryDbEntity> imple
 		/* filter()는 MemoryDbEntity에서 상속받은 index를 의미함
 		 * findFirst()는 있을수도 있고 없을수도 있는 첫번째 값을 리턴함 -> 없으면 empty리턴
 		 * */ 
-		System.out.println("@ 앱스트랙트: "+db.stream().filter(it -> it.getIndex() == index).findFirst());
 		return db.stream().filter(it -> it.getIndex() == index).findFirst();
 	}
 

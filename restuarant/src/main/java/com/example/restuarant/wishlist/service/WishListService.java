@@ -1,7 +1,6 @@
 package com.example.restuarant.wishlist.service;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.example.restuarant.naver.NaverClient;
 import com.example.restuarant.naver.dto.SearchImageReq;
 import com.example.restuarant.naver.dto.SearchLocalReq;
-import com.example.restuarant.naver.dto.SearchLocalRes;
 import com.example.restuarant.wishlist.dto.WishListDto;
 import com.example.restuarant.wishlist.entity.WishListEntity;
 import com.example.restuarant.wishlist.repository.WishListRepository;
@@ -35,9 +33,7 @@ public class WishListService {
 			var localItem = searchLocalRes.getItems().stream().findFirst().get();
 			
 			// HTML 태그있는 거 삭제(replace)
-			System.out.println("@ 이미지타이틀1: "+localItem.getTitle());
 			var imageQuery = localItem.getTitle().replaceAll("<[^>]*>", "");
-			System.out.println("@ 이미지타이틀2: "+imageQuery);
 			var searchImageReq = new SearchImageReq();
 			searchImageReq.setQuery(imageQuery);
 			
@@ -99,7 +95,6 @@ public class WishListService {
     }
 
 	public List<WishListDto> findAll() {
-		System.out.println("@ 스트림이 뭐야 : " + wishListRepository.findAll().stream());
 		return wishListRepository.findAll()
 				.stream()
 				.map(it -> entityToDto(it))
@@ -108,7 +103,6 @@ public class WishListService {
 
 	public void delete(int index) {
 		wishListRepository.deleteById(index);
-		
 	}
 
 	public void addVisit(int index) {
@@ -123,6 +117,4 @@ public class WishListService {
 		}
 	}
     
-    
-
 }

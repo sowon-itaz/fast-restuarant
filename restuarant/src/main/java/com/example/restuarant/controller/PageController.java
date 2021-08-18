@@ -9,8 +9,9 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/pages")
 public class PageController {
 	
+	// http://localhost:8080/pages/main
 	@GetMapping("/main")
     public ModelAndView main(){
-        return new ModelAndView("aaaa/main");
+        return new ModelAndView("main");
     }
 }
